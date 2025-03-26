@@ -1,0 +1,9 @@
+.menushowdata {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+.menushowdata li {
+    display: inline-block;
+    margin-right: 10px;
+}

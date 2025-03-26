@@ -1,0 +1,22 @@
+#nevbar{
+    margin: 0 10px;
+    display: flex;
+    justify-content: center;
+}
+
+#nevbar ul{
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+    display: flex;
+}
+#nevbar ul li {
+    cursor: pointer;
+    color: rgb(167, 167, 167);
+}
+#nevbar ul li:hover{
+    color: rgb(255, 255, 255);
+}
+#nevbar ul li{
+    margin: 0 20px;
+}

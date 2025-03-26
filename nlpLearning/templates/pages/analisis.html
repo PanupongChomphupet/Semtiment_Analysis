@@ -1,0 +1,27 @@
+{% extends "pages/base.html" %}
+{% block content %}
+<h2>Submit Your Feedback</h2>
+<form method="post">
+    {% csrf_token %}
+    <div class="mb-3">
+        <label for="subject" class="form-label">Select Subject</label>
+        <select class="form-select" id="subject" name="subject">
+            <option value="โครงสร้างข้อมูล">โครงสร้างข้อมูล</option>
+            <option value="ระบบฐานข้อมูล">ระบบฐานข้อมูล</option>
+            <option value="ระบบปฏิบัติการ">ระบบปฏิบัติการ</option>
+            <option value="การเขียนโปรแกรมภาษาคอมพิวเตอร์">การเขียนโปรแกรมภาษาคอมพิวเตอร์</option>
+            <option value="การติดตั้งและบำรุงรักษาคอมพิวเตอร์">การติดตั้งและบำรุงรักษาคอมพิวเตอร์</option>
+        </select>
+    </div>
+    <div class="mb-3">
+        <label for="comment" class="form-label">Your Feedback</label>
+        <textarea class="form-control" id="comment" name="comment" rows="3" placeholder="กรอกความคิดเห็นของคุณที่นี่"></textarea>
+    </div>
+    <button type="submit" class="btn btn-dark">Analyze</button>
+</form>
+
+{% if result %}
+<h3 class="mt-4">Result:</h3>
+<p><strong>Sentiment:</strong> {{ result }}</p>
+{% endif %}
+{% endblock %}

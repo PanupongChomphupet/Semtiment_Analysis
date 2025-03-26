@@ -1,0 +1,36 @@
+{% extends "pages/base.html" %}
+{% block content %}
+<h2 class="mb-4">อัปโหลดไฟล์ความคิดเห็นของนักศึกษา</h2>
+<form method="post" enctype="multipart/form-data" class="mb-4">
+    {% csrf_token %}
+    <div class="mb-3">
+        <input type="file" name="file" class="form-control" required>
+    </div>
+    <button type="submit" class="btn btn-primary">อัปโหลด & วิเคราะห์</button>
+</form>
+{% if result %}
+<h3>ผลการวิเคราะห์</h3>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>วิชา</th>
+            <th>จำนวนความคิดเห็น</th>
+            <th>Positive</th>
+            <th>Negative</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for subject, comment in result.items %}
+        <tr>
+            <td>{{forloop.counter}}</td>
+            <td>{{subject}}</td>
+            <td>{{comment.total}}</td>
+            <td>{{comment.positive}}</td>
+            <td>{{comment.negative}}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endif %}
+{% endblock %}

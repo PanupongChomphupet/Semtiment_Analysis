@@ -1,0 +1,13 @@
+# Ignore database
+db.sqlite3
+
+**/migrations/
+
+__pycache__/
+*.pyc
+*.pyo
+
+venv/
+env/
+
+.env

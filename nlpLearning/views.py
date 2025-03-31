@@ -1,9 +1,13 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from .utils.ml_function import text_process, model_pred
 from django.core.files.storage import FileSystemStorage
 from django.http import JsonResponse
 import pandas as pd
 import os
+from .models import Sentiment_Analisis
+from django.contrib.auth import login, authenticate, logout
+from .forms import RegisterForm
+from django.contrib.auth.forms import AuthenticationForm
 # from .models import Sentiment_Analisis
 # Create your views here.
 
@@ -41,8 +45,8 @@ def analisis(request):
             sentiment_anal = model_pred(comment_processed)
             sentiment_anal = "".join(sentiment_anal)
 
-            # text_sent = TextSent.objects.create(subject=subject, comment=comment, sentiment = sentiment_anal)
-            # text_sent.save()
+            text_sent = Sentiment_Analisis.objects.create(subject=subject, comment=comment, sentiment = sentiment_anal)
+            text_sent.save()
             # analisis sentiment 
             
 
@@ -104,4 +108,27 @@ def apidata(request):
     return JsonResponse(data) """
 
 def login(request):
-    return render(request, 'pages/login.html')
+    if request.method == 'POST':
+        form = AuthenticationForm(data=request.POST)
+        if form.is_valid():
+            user = form.get_user()
+            login(request, user)
+            return redirect('home')
+    else:
+        form = AuthenticationForm()
+    return render(request, 'pages/login.html', {'form': form})
+
+def register(request):
+    if request.method == 'POST':
+        form = RegisterForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            return redirect('home')
+    else:
+        form = RegisterForm()
+    return render(request, 'pages/register.html', {'form': form})
+
+def logout(request):
+    logout(request)
+    return redirect('login')

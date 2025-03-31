@@ -122,3 +122,15 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# ใช้ Django Authentication
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+]
+
+# ตั้งค่าหน้า Login และ Logout
+LOGIN_REDIRECT_URL = 'home'  # หลังล็อกอินไปที่หน้า home
+LOGOUT_REDIRECT_URL = 'login'  # หลัง logout กลับไปหน้า login
+
+
+AUTH_USER_MODEL = 'nlpLearning.CustomUser'

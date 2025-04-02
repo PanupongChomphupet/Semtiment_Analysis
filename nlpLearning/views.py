@@ -15,25 +15,6 @@ from django.contrib.auth.forms import AuthenticationForm
 def home(request):
     return render(request, 'pages/home.html')
 
-""" # page_result
-def result(request):
-    text_sent = TextSent.objects.all()
-    result = {}
-    for text in text_sent:
-        subject = {}
-        if text.subject not in result:
-            result[text.subject] = {'count': 0, 'Positive': 0, 'Negative': 0}
-        result[text.subject]['count'] += 1
-
-        if text.sentiment == 'Positive':
-            result[text.subject]['Positive'] += 1
-        elif text.sentiment == 'Negative':
-            result[text.subject]['Negative'] += 1
-
-    return render(request, 'pages/result.html', {
-        'results': result
-    }) """
-
 def analisis(request):
     sentiment_anal = None
     if request.method == 'POST':
@@ -51,6 +32,69 @@ def analisis(request):
             
 
     return render(request, 'pages/analisis.html', {'result': sentiment_anal})
+
+
+def user_login(request):
+
+    if request.user.is_authenticated:
+        return redirect('home')
+
+    if request.method == 'POST':
+        form = AuthenticationForm(data = request.POST)
+        print("POST data :", request.POST)
+        if form.is_valid():
+            print("Active user")
+            user = form.get_user()
+            login(request, user)
+            return redirect('home')
+        else :
+            print("Not Active user")
+    else:
+        form = AuthenticationForm()
+    return render(request, 'pages/login.html', {'form': form})
+
+def register(request):
+
+    if request.user.is_authenticated:
+        return redirect('home')
+
+    if request.method == 'POST':
+        form = RegisterForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            return redirect('home')
+    else:
+        form = RegisterForm()
+    return render(request, 'pages/register.html', {'form': form})
+
+def user_logout(request):
+    logout(request)
+    return redirect('login')
+
+""" # data page
+def apidata(request):
+    text_sen = TextSent.objects.all()
+    labels = []
+    for text in text_sen:
+        if text.subject not in labels:
+            labels.append(text.subject)
+            
+
+        
+    data = {
+        "labels": labels,
+        "datasets": [
+            {
+                "label": "จำนวนวิชา",
+                "backgroundColor": "rgba(75, 192, 192, 0.2)",
+                "borderColor": "rgba(75, 192, 192, 1)",
+                "borderWidth": 1,
+                "data": [10, 20, 30],
+            }
+        ]
+    }
+    return JsonResponse(data) """
 
 def upload(request):
     text = []    
@@ -83,52 +127,3 @@ def upload(request):
             text = subject_sumary
     return render(request, 'pages/upload.html', {'result': text})
 
-""" # data page
-def apidata(request):
-    text_sen = TextSent.objects.all()
-    labels = []
-    for text in text_sen:
-        if text.subject not in labels:
-            labels.append(text.subject)
-            
-
-        
-    data = {
-        "labels": labels,
-        "datasets": [
-            {
-                "label": "จำนวนวิชา",
-                "backgroundColor": "rgba(75, 192, 192, 0.2)",
-                "borderColor": "rgba(75, 192, 192, 1)",
-                "borderWidth": 1,
-                "data": [10, 20, 30],
-            }
-        ]
-    }
-    return JsonResponse(data) """
-
-def login(request):
-    if request.method == 'POST':
-        form = AuthenticationForm(data=request.POST)
-        if form.is_valid():
-            user = form.get_user()
-            login(request, user)
-            return redirect('home')
-    else:
-        form = AuthenticationForm()
-    return render(request, 'pages/login.html', {'form': form})
-
-def register(request):
-    if request.method == 'POST':
-        form = RegisterForm(request.POST)
-        if form.is_valid():
-            user = form.save()
-            login(request, user)
-            return redirect('home')
-    else:
-        form = RegisterForm()
-    return render(request, 'pages/register.html', {'form': form})
-
-def logout(request):
-    logout(request)
-    return redirect('login')

@@ -1,0 +1,50 @@
+{% extends 'pages/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4">👨‍🏫 สวัสดีอาจารย์ {{ user.username }}</h2>
+
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">📚 วิชาที่คุณสอน</div>
+        <div class="card-body">
+            {% for subject in teacher_subjects %}
+            <div class="d-flex justify-content-between mb-2">
+                <div><strong>{{ subject.name }}</strong></div>
+                <div>
+                    <a href="{% url 'view_feedback' subject.id %}" class="btn btn-sm btn-info">ดูความคิดเห็น</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    {% if selected_subject %}
+    <div class="card mb-4">
+        <div class="card-header bg-success text-white">📊 สรุปความคิดเห็นของ "{{ selected_subject.name }}"</div>
+        <div class="card-body">
+            <ul>
+                <li>บวก: {{ stats.positive }}%</li>
+                <li>กลาง: {{ stats.neutral }}%</li>
+                <li>ลบ: {{ stats.negative }}%</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header bg-dark text-white">💬 ความคิดเห็นจากนักศึกษา</div>
+        <div class="card-body">
+            {% for comment in feedbacks %}
+            <p>
+                "{{ comment.comment }}" →
+                <span class="text-primary">{{ comment.sentiment }}</span>
+                <small class="text-muted">({{ comment.date_created|date:"d M Y" }})</small>
+            </p>
+            {% empty %}
+            <p class="text-muted">ยังไม่มีความคิดเห็น</p>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,8 +1,16 @@
 {% extends 'pages/base.html' %}
+{% load static %}
+
 {% block content %}
 <div class="text-center">
-    <h1>Welcome to Sentiment Analysis</h1>
-    <p>ระบบวิเคราะห์ความคิดเห็นของนักศึกษาต่อรายวิชา</p>
-    <a href="/analisis" class="btn btn-dark mt-3">Start Analyzing</a>
+    <h1>ยินดีต้อนรับสู่เว็บไซต์วิเคราะห์ความรู้สึก</h1>
+    <div class="input-group mb-3">
+        <input type="text" class="form-control" placeholder="Recipient's username" aria-label="Recipient's username"
+            aria-describedby="button-addon2">
+        <button class="btn btn-outline-secondary" type="button" id="button-addon2">ตกลง</button>
+    </div>
+    <div class="btn-action-analysis">      
+        <button class="">ระบบวิเคราะห์แบบแยกสาขา</button> 
+    </div>
 </div>
 {% endblock %}

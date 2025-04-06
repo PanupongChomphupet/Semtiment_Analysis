@@ -1,19 +1,21 @@
 {% extends "pages/base.html" %}
 {% load widget_tweaks %}
 {% block content %}
-<h2>Login</h2>
-<form method="POST">
-    {% csrf_token %}
-    <div class="form-group">
-        <label for="exampleInputEmail1">Email address</label>
-        {{ form.username|add_class:"form-control"|attr:"placeholder:Enter Username" }}
-        <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
-    </div>
-    <div class="form-group">
-        <label for="exampleInputPassword1">Password</label>
-        {{ form.password|add_class:"form-control"|attr:"placeholder:Enter Password" }}
-    </div><br>
-    <button type="submit" class="btn btn-primary">Submit</button>
-</form>
-<a href="{% url 'register' %}" class="text-decoration-none">Don't have an account? Register here</a>
+<div class="login-page m-3">
+    <h2>Login</h2>
+    <form method="POST">
+        {% csrf_token %}
+        <div class="form-group pd-2">
+            <label for="exampleInputEmail1">Username</label>
+            {{ form.username|add_class:"form-control"|attr:"placeholder:Enter Username" }}
+            <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+        </div>
+        <div class="form-group">
+            <label for="exampleInputPassword1">Password</label>
+            {{ form.password|add_class:"form-control"|attr:"placeholder:Enter Password" }}
+        </div><br>
+        <button class="btn btn-dark" type="submit">Submit</button>
+    </form>
+    <a href="{% url 'register' %}" class="text-decoration-none">Don't have an account? Register here</a>
+</div>
 {% endblock %}

@@ -4,9 +4,9 @@ from django.core.files.storage import FileSystemStorage
 from django.http import JsonResponse
 import pandas as pd
 import os
-from .models import Sentiment_Analisis
+from .models import Sentiment_Analisis, Subject
 from django.contrib.auth import login, authenticate, logout
-from .forms import RegisterForm
+from .forms import RegisterForm, CommentForm
 from django.contrib.auth.forms import AuthenticationForm
 # from .models import Sentiment_Analisis
 # Create your views here.
@@ -33,7 +33,6 @@ def analisis(request):
 
     return render(request, 'pages/analisis.html', {'result': sentiment_anal})
 
-
 def user_login(request):
 
     if request.user.is_authenticated:
@@ -43,10 +42,12 @@ def user_login(request):
         form = AuthenticationForm(data = request.POST)
         print("POST data :", request.POST)
         if form.is_valid():
-            print("Active user")
             user = form.get_user()
             login(request, user)
-            return redirect('home')
+            if user.role == 'teacher':
+                return redirect('teacher/dashboard')
+            elif user.role == 'student':
+                return redirect('student/dashboard')
         else :
             print("Not Active user")
     else:
@@ -63,7 +64,11 @@ def register(request):
         if form.is_valid():
             user = form.save()
             login(request, user)
-            return redirect('home')
+            
+            if user.role == 'teacher':
+                return redirect('teacher/dashboard')
+            elif user.role == 'student':
+                return redirect('student/dashboard')
     else:
         form = RegisterForm()
     return render(request, 'pages/register.html', {'form': form})
@@ -71,6 +76,41 @@ def register(request):
 def user_logout(request):
     logout(request)
     return redirect('login')
+
+def dashboard_teacher(request):
+    if not request.user.is_authenticated:
+        return redirect('login')
+    return render(request, 'pages/teacher/teacher_dashboard.html')
+
+def dashboard_student(request):
+    if not request.user.is_authenticated:
+        return redirect('login')
+    subject = Subject.objects.all()
+    return render(request, 'pages/student/student_dashboard.html', {
+        'subjects': subject
+    })
+
+def submint_comment(request, subject_id):
+    if not request.user.is_authenticated:
+        return redirect('login')
+    
+    subject = Subject.objects.get(id=subject_id)
+
+    if request.method == 'POST':
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            subject = form.cleaned_data['subject']
+            coment = form.cleaned_data['comment']
+        print(subject, coment)        
+
+
+    else:
+        form = CommentForm()
+    
+    return render(request, 'pages/student/submit_comment.html', {
+        'form': form,
+        'subject': subject
+    })
 
 """ # data page
 def apidata(request):

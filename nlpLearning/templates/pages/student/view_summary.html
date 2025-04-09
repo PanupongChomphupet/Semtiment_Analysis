@@ -1,0 +1,43 @@
+{% extends 'pages/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4">ผลวิเคราะห์ความคิดเห็นต่อรายวิชา</h2>
+    {% if subject and summary %}
+    <div class="card mb-4 shadow-sm">
+        <div class="card-body">
+            <h5 class="card-title">วิชา : {{subject}}</h5>
+            <p class="card-text">
+                ความคิดเห็นทั้งหมด: <strong>{{summary.total}}</strong> รายการ
+            </p>
+            <div class="row">
+                <div class="col-md-4">
+                    👍 ความคิดเห็นเชิงบวก:
+                    <span class="badge bg-success">
+                        {{ summary.positive}}
+                    </span>
+                </div>
+                <div class="col-md-4">
+                    👎 ความคิดเห็นเชิงลบ:
+                    <span class="badge bg-danger">
+                        {{summary.negative}}
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <p>ยังไม่มีความคิดเห็นในระบบ</p>
+    {% endif %}
+
+    <h3>ความคิดเห็นทั้งหมด:</h3>
+    <ul>
+        {% for comment in comments %}
+        <li>{{ comment.comment }} - <strong>{{ comment.sentiment }}</strong></li>
+        {% empty %}
+        <p>ยังไม่มีความคิดเห็น</p>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}

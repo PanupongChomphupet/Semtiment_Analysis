@@ -13,7 +13,7 @@
                 <div><strong>{{ subject.name }}</strong></div>
                 <div>
                     <a href="{% url 'submit_comment' subject.id %}" class="btn btn-sm btn-success">ส่งความคิดเห็น</a>
-                    <a href="" class="btn btn-sm btn-secondary">ดูผลสรุป</a>
+                    <a href="{% url 'view_summary' subject.id %}" class="btn btn-sm btn-secondary">ดูผลสรุป</a>
                 </div>
             </div>
             {% endfor %}
@@ -23,7 +23,7 @@
     <div class="card">
         <div class="card-header bg-dark text-white">🕓 ประวัติการแสดงความคิดเห็น</div>
         <div class="card-body">
-            {% for comment in user_comments %}
+            {% for comment in comments %}
             <p>
                 <strong>{{ comment.subject.name }}</strong>: "{{ comment.comment }}" →
                 <span class="text-primary">{{ comment.sentiment }}</span>

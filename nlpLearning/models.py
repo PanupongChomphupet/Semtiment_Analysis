@@ -32,11 +32,16 @@ class CustomUser(AbstractUser):
         return self.username
 
 class Sentiment_Analisis(models.Model):
-    subject = models.CharField(max_length=100)
-    comment = models.CharField(max_length=100)
-    sentiment = models.CharField(max_length=100)
+    subject = models.ForeignKey(Subject, on_delete=models.CASCADE, related_name='comments')
+    student = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        limit_choices_to={'role': 'student'},
+        null=True
+    )
+    comment = models.TextField()
+    sentiment = models.CharField(max_length=20, choices=SENTIMENT_CHOICES, null=True)
     date_created = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return self.sentiment
     
+    def __str__(self):
+        return self.comment

@@ -1,15 +1,14 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth import login, authenticate, logout
+from django.contrib.auth.forms import AuthenticationForm
 from .utils.ml_function import text_process, model_pred
 from django.core.files.storage import FileSystemStorage
+from .models import Sentiment_Analisis, Subject
+from .forms import RegisterForm, CommentForm
 from django.http import JsonResponse
+from django.contrib import messages
 import pandas as pd
 import os
-from .models import Sentiment_Analisis, Subject
-from django.contrib.auth import login, authenticate, logout
-from .forms import RegisterForm, CommentForm
-from django.contrib.auth.forms import AuthenticationForm
-# from .models import Sentiment_Analisis
-# Create your views here.
 
 
 def home(request):
@@ -80,14 +79,57 @@ def user_logout(request):
 def dashboard_teacher(request):
     if not request.user.is_authenticated:
         return redirect('login')
+    
+    subject = Subject.objects.filter(teacher=request.user).all()
+
+    return render(request, 'pages/teacher/teacher_dashboard.html', {
+        'subjects': subject
+    })
+
+def add_subject(request):
+    if not request.user.is_authenticated:
+        return redirect('login')
+    
+    if request.method == 'POST':
+        subject_name = request.POST.get('subject_name', '').strip()
+        if subject_name:
+            subject = Subject.objects.create(name=subject_name, teacher=request.user)
+            messages.success(request, 'บันทึกข้อมูลสำเร็จ')
+            return redirect('dashboard_teacher')
+        else: 
+            messages.error(request, 'กรุณากรอกชื่อวิชา')
+
     return render(request, 'pages/teacher/teacher_dashboard.html')
+
+def edit_subject(request, subject_id):
+    subject = get_object_or_404(Subject, id=subject_id)
+
+    if request.method == 'POST':
+        new_subject = request.POST.get('subject_name', '').strip()
+        if new_subject:
+            subject.name = new_subject
+            subject.save()
+            messages.success(request, 'Subject updated successfully.')
+            return redirect('dashboard_teacher')
+
+        
+    return render(request, 'pages/teacher/edit_subject.html', {
+        'subject': subject
+    })
+
+def delete_subject(request, subject_id):
+    subject = get_object_or_404(Subject, id=subject_id)
+    subject.delete()
+    return redirect('dashboard_teacher')
 
 def dashboard_student(request):
     if not request.user.is_authenticated:
         return redirect('login')
     subject = Subject.objects.all()
+    comment = Sentiment_Analisis.objects.filter(student=request.user)
     return render(request, 'pages/student/student_dashboard.html', {
-        'subjects': subject
+        'subjects': subject,
+        'comments': comment
     })
 
 def submint_comment(request, subject_id):
@@ -95,21 +137,42 @@ def submint_comment(request, subject_id):
         return redirect('login')
     
     subject = Subject.objects.get(id=subject_id)
-
     if request.method == 'POST':
         form = CommentForm(request.POST)
         if form.is_valid():
-            subject = form.cleaned_data['subject']
-            coment = form.cleaned_data['comment']
-        print(subject, coment)        
-
-
+            comment = form.cleaned_data['comment']
+            if comment:
+                comment_processed = text_process(comment)
+                sentiment_anal = model_pred(comment_processed)
+                sentiment_anal = "".join(sentiment_anal)
+           
+            text_coment = Sentiment_Analisis.objects.create(subject=subject, comment=comment, student=request.user, sentiment = sentiment_anal)
+            text_coment.save()
+            return redirect('dashboard_student')
     else:
         form = CommentForm()
     
     return render(request, 'pages/student/submit_comment.html', {
         'form': form,
         'subject': subject
+    })
+
+def view_summary(request, subject_id):
+    if not request.user.is_authenticated:
+        return redirect('login')
+    
+    subject = Subject.objects.get(id=subject_id)
+    data_comment = Sentiment_Analisis.objects.filter(subject=subject)
+    summary = { 
+        'total': data_comment.count(),
+        'positive': data_comment.filter(sentiment='Positive').count(),
+        'negative': data_comment.filter(sentiment='Negative').count(),
+    }
+
+    return render(request, 'pages/student/view_summary.html', {
+        'subject': subject,
+        'comments': data_comment,
+        'summary': summary
     })
 
 """ # data page

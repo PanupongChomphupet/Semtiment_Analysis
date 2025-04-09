@@ -29,5 +29,5 @@ class RegisterForm(UserCreationForm):
         fields = ['username', 'email', 'role', 'password1', 'password2']
 
 class CommentForm(forms.Form):
-    subject = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}))
+    # subject = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}))
     comment = forms.CharField(widget=forms.Textarea(attrs={'class': 'form-control'}))

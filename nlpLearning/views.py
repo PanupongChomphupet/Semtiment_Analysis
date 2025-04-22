@@ -207,11 +207,10 @@ def edit_question( request, question_id):
     if request.method == "POST":
         form = QuestionForm(request.POST or None, instance=question)
         formset = ChoiceFormSet(request.POST or None, instance=question) if question.type == "choice" else None
-
+        
+        print("request.POST :", request.POST)   
         if form.is_valid() and (formset is None or formset.is_valid()):
-            print("Form is valid")
             form.save()
-            print(formset)
             if formset:
                 formset.save()
             messages.success(request, "แก้ไขคำถามเรียบร้อยแล้ว")

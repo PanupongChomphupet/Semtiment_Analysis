@@ -1,71 +1,42 @@
-{% extends 'pages/base.html' %}
-{% load static %}
+{% extends 'pages/base.html' %} {% load static %} {% block content %}
+<div class="container mt-4">
+  <h2 class="mb-4">📚 รายวิชาที่คุณสอน</h2>
 
-{% block content %}
-<div class="container mt-5">
-    <h2 class="mb-4">👨‍🏫 สวัสดีอาจารย์ {{ user.username }}</h2>
-    <div class="card mb-4">
-        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-            <span>📚 วิชาที่คุณสอน</span>
-            <a href="" class="btn btn-light btn-sm">+ สร้างแบบสอบถาม</a>
-        </div>
+  {% if subjects %}
+  <div class="row">
+    {% for subject in subjects %}
+    <div class="col-md-6 mb-4">
+      <div class="card shadow-sm">
         <div class="card-body">
-            {% for subject in subjects %}
-            <div class="d-flex justify-content-between align-items-center mb-2">
-                <div><strong>{{ subject.name }}</strong></div>
-                <div>
-                    <a href="" class="btn btn-sm btn-info">ดูความคิดเห็น</a>
-                    <a href="{% url 'edit_subject' subject.id %}" class="btn btn-sm btn-warning">แก้ไข</a>
-                    <a href="{% url 'delete_subject' subject.id %}" class="btn btn-sm btn-danger"
-                        onclick="return confirm('คุณแน่ใจหรือไม่ว่าต้องการลบวิชานี้?')">ลบ</a>
-                </div>
-            </div>
-            {% empty %}
-            <p class="text-muted">ยังไม่มีวิชาที่สอน</p>
-            {% endfor %}
-        </div>
-    </div>
+          <h5 class="card-title">{{ subject }}</h5>
 
-    <div class="card mb-4">
-        <div class="card-header bg-warning text-dark">➕ เพิ่มวิชาที่สอน</div>
-        <div class="card-body">
-            <form method="POST" action="{% url 'add_subject' %}">
-                {% csrf_token %}
-                <div class="mb-3">
-                    <label for="subjectName" class="form-label">ชื่อวิชา</label>
-                    <input type="text" name="subject_name" id="subjectName" class="form-control" required>
-                </div>
-                <button type="submit" class="btn btn-primary">เพิ่มวิชา</button>
-            </form>
+          <div class="d-grid gap-2 mt-3">
+            <a
+              href="{% url 'create_questionnaire' subject.id %}"
+              class="btn btn-outline-primary btn-sm"
+            >
+              ➕ สร้างแบบสอบถาม
+            </a>
+            <a
+              href="{% url 'view_questionnaire' subject.id %}"
+              class="btn btn-outline-secondary btn-sm"
+            >
+              📄 ดูแบบสอบถามทั้งหมด
+            </a>
+            <a
+              href=""
+              class="btn btn-outline-success btn-sm"
+            >
+              📊 ดูผลสรุปแบบสอบถาม
+            </a>
+          </div>
         </div>
+      </div>
     </div>
-
-
-    {% if selected_subject %}
-    <div class="card mb-4">
-        <div class="card-header bg-success text-white">📊 สรุปความคิดเห็นของ "{{ selected_subject.name }}"</div>
-        <div class="card-body">
-            <ul>
-                <li>บวก: {{ stats.positive }}%</li>
-                <li>ลบ: {{ stats.negative }}%</li>
-            </ul>
-        </div>
-    </div>
-
-    <div class="card">
-        <div class="card-header bg-dark text-white">💬 ความคิดเห็นจากนักศึกษา</div>
-        <div class="card-body">
-            {% for comment in feedbacks %}
-            <p>
-                "{{ comment.comment }}" →
-                <span class="text-primary">{{ comment.sentiment }}</span>
-                <small class="text-muted">({{ comment.date_created|date:"d M Y" }})</small>
-            </p>
-            {% empty %}
-            <p class="text-muted">ยังไม่มีความคิดเห็น</p>
-            {% endfor %}
-        </div>
-    </div>
-    {% endif %}
+    {% endfor %}
+  </div>
+  {% else %}
+  <p class="text-muted">ยังไม่มีรายวิชาในระบบ</p>
+  {% endif %}
 </div>
 {% endblock %}

@@ -1,0 +1,44 @@
+{% extends 'pages/base.html' %}
+{% load static %}
+{% block script %}
+<script src="{% static 'js/edit_question.js' %}"></script>
+{% endblock %}
+{% block content %}
+<div class="container mt-5">
+  <h3>✏️ แก้ไขคำถาม</h3>
+  <form method="post">
+    {% csrf_token %}
+    <div class="mb-3">
+      {{ form.text.label_tag }}
+      {{ form.text }}
+    </div>
+    <div class="mb-3">
+      {{ form.type.label_tag }}
+      {{ form.type }}
+    </div>
+    {% if formset %}
+    <div id="formset-container">
+      <h5>🔘 ตัวเลือก</h5>
+      {{ formset.management_form }}
+      {% for choice_form in formset %}
+      <div class="input-group mb-2 formset-form">
+        {{ choice_form.id }}
+        {{ choice_form.text }}
+        {% if choice_form.instance.pk %}
+        <div class="input-group-append ms-2">
+          {{ choice_form.DELETE }} <span class="text-danger">ลบ</span>
+        </div>
+        {% endif %}
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+    <button type="button" class="btn btn-outline-secondary mt-2" id="add-choice">➕ เพิ่มตัวเลือก</button>
+
+    <br><br>
+
+    <button type="submit" class="btn btn-primary">💾 บันทึก</button>
+    <a href="{% url 'view_detail' questionnaire_id %}" class="btn btn-secondary">🔙 กลับ</a>
+  </form>
+</div>
+{% endblock %}

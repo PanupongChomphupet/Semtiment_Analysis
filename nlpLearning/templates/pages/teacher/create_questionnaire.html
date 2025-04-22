@@ -1,0 +1,110 @@
+{% extends 'pages/base.html' %} {% load static %} {% block script %}
+<script src="{% static 'js/create_questionnaire.js' %}"></script>
+{% endblock %} {% block content %}
+<div class="container mt-5">
+  <h2 class="mb-4">📋 สร้างแบบสอบถามใหม่</h2>
+
+  <form method="POST">
+    {% csrf_token %}
+
+    <!-- ชื่อแบบสอบถาม -->
+    <div class="mb-3">
+      <label for="title" class="form-label">ชื่อแบบสอบถาม</label>
+      <input
+        type="text"
+        name="title"
+        id="title"
+        class="form-control"
+        required
+      />
+    </div>
+
+    <!-- เลือกรายวิชา -->
+    <div class="mb-3">
+      <label for="subject" class="form-label">รายวิชา</label>
+      <input type="text" name="subject" id="subject" class="form-control" value="{{subject}}" readonly>
+    </div>
+
+    <!-- คำถามต่าง ๆ -->
+    <div id="questions-container">
+      <!-- คำถามที่ 1 -->
+      <div class="question-block mb-3 p-3 border rounded">
+        <label class="form-label">คำถาม</label>
+        <input
+          type="text"
+          name="questions[]"
+          class="form-control mb-2"
+          placeholder="กรอกคำถาม"
+          required
+        />
+
+        <label class="form-label">ประเภทคำถาม</label>
+        <select
+          name="types[]"
+          class="form-select mb-2 question-type-select"
+          required
+        >
+          <option value="choice">ตัวเลือก</option>
+          <option value="text">คำถามปลายเปิด</option>
+        </select>
+
+        <div class="choices-section">
+          <label class="form-label">ตัวเลือก</label>
+          <div class="choice-list">
+            <!-- default เป็นตัวเลือกกรอกเอง -->
+            <div class="input-group mb-1">
+              <input
+                type="text"
+                name="choices_0[]"
+                class="form-control"
+                placeholder="ตัวเลือกที่ 1"
+              />
+              <button
+                type="button"
+                class="btn btn-outline-danger remove-choice-btn"
+              >
+                ลบ
+              </button>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            class="btn btn-sm btn-secondary add-choice-btn mt-2"
+          >
+            + เพิ่มตัวเลือกเอง
+          </button>
+          <!-- <button
+            type="button"
+            class="btn btn-sm btn-outline-primary mt-2 insert-default-btn"
+          >
+            ↪ เพิ่มตัวเลือก 5-1 อัตโนมัติ
+          </button> -->
+        </div>
+
+        <div class="text-end mt-2">
+          <button
+            type="button"
+            class="btn btn-danger btn-sm remove-question-btn"
+          >
+            🗑 ลบคำถาม
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <button
+      type="button"
+      class="btn btn-outline-primary mb-3"
+      id="add-question-btn"
+    >
+      ➕ เพิ่มคำถาม
+    </button>
+    <br />
+    <button type="submit" class="btn btn-success mb-3">
+      ✅ สร้างแบบสอบถาม
+    </button>
+  </form>
+</div>
+
+{% endblock %}

@@ -1,39 +1,61 @@
-{% extends "pages/base.html" %}
-{% load static %}
-
-{% block content %}
+{% extends "pages/base.html" %} {% load static %} {% block content %}
 <div class="container mt-5">
-    <h2 class="mb-4">👋 ยินดีต้อนรับคุณ {{ user.username }}</h2>
-
-    <div class="card mb-4">
-        <div class="card-header bg-primary text-white">📚 รายวิชาทั้งหมด</div>
-        <div class="card-body">
-            {% for subject in subjects %}
-            <div class="d-flex justify-content-between mb-2">
-                <div><strong>{{ subject.name }}</strong></div>
-                <div>
-                    <a href="{% url 'submit_comment' subject.id %}" class="btn btn-sm btn-success">ส่งความคิดเห็น</a>
-                    <a href="{% url 'view_summary' subject.id %}" class="btn btn-sm btn-secondary">ดูผลสรุป</a>
-                </div>
-            </div>
-            {% endfor %}
-        </div>
+  <h2 class="mb-4">👩‍🎓 ยินดีต้อนรับคุณ {{ user.username }}</h2>
+  {% if messages %} {% for message in messages %}
+  <div
+    class="alert alert-{{ message.tags }} alert-dismissible fade show"
+    role="alert"
+  >
+    {{ message }}
+    <button
+      type="button"
+      class="btn-close"
+      data-bs-dismiss="alert"
+      aria-label="Close"
+    ></button>
+  </div>
+  {% endfor %} {% endif %}
+  <!-- วิชาที่มีแบบสอบถาม -->
+  <div class="card mb-4">
+    <div class="card-header bg-primary text-white">
+      📋 แบบสอบถามสำหรับวิชาต่าง ๆ
     </div>
+    <div class="card-body">
+      {% for subject in subjects %}
+      <div class="mb-3">
+        <h5>{{ subject.name }}</h5>
 
-    <div class="card">
-        <div class="card-header bg-dark text-white">🕓 ประวัติการแสดงความคิดเห็น</div>
-        <div class="card-body">
-            {% for comment in comments %}
-            <p>
-                <strong>{{ comment.subject.name }}</strong>: "{{ comment.comment }}" →
-                <span class="text-primary">{{ comment.sentiment }}</span>
-            </p>
-            {% empty %}
-            <p class="text-muted">ยังไม่มีความคิดเห็น</p>
-            {% endfor %}
+        {% for questionnaire in subject.questionnaires.all %}
+        <div class="d-flex justify-content-between align-items-center">
+          <span>{{ questionnaire.title }}</span>
+          {% if questionnaire.id in answered_questionnaire_ids %}
+          <span class="text-success">✅ ตอบแล้ว</span>
+          {% else %}
+          <a
+            href="{% url 'answer_questionnaire' questionnaire.id %}"
+            class="btn btn-sm btn-success"
+            >ตอบแบบสอบถาม</a
+          >
+          {% endif %}
         </div>
+        {% empty %}
+        <p class="text-muted">ยังไม่มีแบบสอบถาม</p>
+        {% endfor %}
+        <hr />
+      </div>
+      {% empty %}
+      <p class="text-muted">ยังไม่มีวิชาที่เปิดแบบสอบถาม</p>
+      {% endfor %}
     </div>
+  </div>
+
+  <!-- ดูผลวิเคราะห์ -->
+  <div class="card">
+    <div class="card-header bg-dark text-white">📊 ดูผลความคิดเห็น</div>
+    <div class="card-body">
+      <a href="" class="btn btn-info">ดูผลสรุปความคิดเห็น</a>
+    </div>
+  </div>
 </div>
-
 
 {% endblock %}

@@ -1,1 +1,33 @@
 {% extends "pages/base.html" %}
+{% load static %}
+{% block content %}
+<div class="container mt-5">
+    <h3 class="mb-4">💬 ความคิดเห็นของนักศึกษาต่อวิชา "{{ subject }}"</h3>
+
+    {% if feedbacks %}
+    <div class="list-group">
+        {% for feedback in feedbacks %}
+        <div class="list-group-item">
+            <p>
+                "{{ feedback.comment }}"
+                <span class="badge 
+                        {% if feedback.sentiment == 'Positive' %}
+                            bg-success
+                        {% else %}
+                            bg-danger
+                        {% endif %}
+                    ">
+                    {{ feedback.sentiment }}
+                </span>
+            </p>
+            <small class="text-muted">วันที่: {{ feedback.date_created|date:"d M Y" }}</small>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p class="text-muted">ยังไม่มีความคิดเห็นในวิชานี้</p>
+    {% endif %}
+
+    <a href="{% url 'dashboard_teacher' %}" class="btn btn-secondary mt-4">⬅️ กลับไปหน้าหลัก</a>
+</div>
+{% endblock %}

@@ -1,0 +1,45 @@
+{% extends 'pages/base.html' %}
+{% block content %}
+<div class="container mt-5">
+  <h3 class="mb-4">📄 รายละเอียดแบบสอบถาม: {{ questionnaire.title }}</h3>
+
+  <p><strong>รายวิชา:</strong> {{ questionnaire.subject.name }}</p>
+  <p><strong>สร้างเมื่อ:</strong> {{ questionnaire.date_create|date:"d M Y - H:i" }}</p>
+
+  {% if questionnaire.questions.all %}
+    <ol class="list-group list-group-numbered mb-4">
+      {% for question in questionnaire.questions.all %}
+        <li class="list-group-item">
+          <div class="d-flex justify-content-between align-items-start">
+            <div>
+              <strong>{{ question.text }}</strong>  
+              <br>
+              <span class="badge bg-secondary">{{ question.get_type_display }}</span>
+
+              {% if question.type == "choice" %}
+                <ul class="mt-2">
+                  {% for choice in question.choices.all %}
+                    <li>{{ choice.text }}</li>
+                  {% empty %}
+                    <li class="text-muted">ไม่มีตัวเลือก</li>
+                  {% endfor %}
+                </ul>
+              {% endif %}
+            </div>
+
+            <div>
+              <a href="{% url 'edit_question' question.id %}" class="btn btn-sm btn-outline-warning">✏️ แก้ไข</a>
+              <a href="" class="btn btn-sm btn-outline-danger" onclick="return confirm('ลบคำถามนี้?');">🗑 ลบ</a>
+            </div>
+          </div>
+        </li>
+      {% endfor %}
+    </ol>
+  {% else %}
+    <p class="text-muted">❌ ยังไม่มีคำถาม</p>
+  {% endif %}
+
+  <a href="" class="btn btn-success mb-3">➕ เพิ่มคำถาม</a>
+  <a href="" class="btn btn-secondary mb-3">🔙 กลับ</a>
+</div>
+{% endblock %}

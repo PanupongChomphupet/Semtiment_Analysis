@@ -1,0 +1,29 @@
+{% extends 'pages/base.html' %}
+{% block content %}
+<div class="container mt-5">
+  <h3 class="mb-4">📋 แบบสอบถามในรายวิชา: {{ subject.name }}</h3>
+
+  {% if questionnaires %}
+    <div class="list-group">
+      {% for questionnaire in questionnaires %}
+        <div class="list-group-item d-flex justify-content-between align-items-center">
+          <div>
+            <strong>{{ questionnaire.title }}</strong><br />
+            <small class="text-muted">สร้างเมื่อ {{ questionnaire.date_create|date:"d M Y - H:i" }}</small><br />
+            <small>จำนวนคำถาม: {{ questionnaire.questions.count }}</small>
+          </div>
+          <div class="d-flex gap-2">
+            <a href="{% url 'view_detail' questionnaire.id %}" class="btn btn-outline-info btn-sm">👁 ดู</a>
+            <a href="" class="btn btn-outline-success btn-sm">📊 สรุปผล</a>
+            <a href="" class="btn btn-outline-danger btn-sm" onclick="return confirm('คุณแน่ใจหรือไม่ที่จะลบแบบสอบถามนี้?');">🗑 ลบ</a>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p class="text-muted">❌ ยังไม่มีแบบสอบถามในรายวิชานี้</p>
+  {% endif %}
+
+  <a href="{% url 'dashboard_teacher' %}" class="btn btn-secondary mt-4">🔙 กลับไปยังแดชบอร์ด</a>
+</div>
+{% endblock %}
